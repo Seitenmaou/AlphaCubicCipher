@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AlphaCubeCipher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <head>
+      <link rel="stylesheet" href="styles.css">
+    </head>
+    <script type="text/javascript" src="./cipher.js"></script>
+  </head>
+  <body>
+    <div id="cubeTest1"></div>
+    <div id="cubeTest2"></div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>document.getElementById("cubeTest1").innerHTML = cipher("This is going to be great","01110110110")</script>
+    <script>document.getElementById("cubeTest2").innerHTML = decipher("020222100010200100010200212102100121212200020102200220221200212000221210020","01110110110")</script>
+
+  </body>
+</html>

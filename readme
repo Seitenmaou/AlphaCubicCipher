@@ -1,0 +1,40 @@
+//It says readme but its just note scribbles on how the cipher works tbh...
+
+/*
+VARIANT
+1 = ROTATE UP || TURN CW
+0 = DO NOTHING
+ORDER : ROTATE TURN ROTATE TURN ...
+*/
+
+/*
+Cipher conversion
+KEY ORG TRN RTT (from org)
+  = 000 002 200
+a = 001 012 201
+b = 002 022 202
+c = 010 001 100
+d = 011 011 101
+e = 012 021 102
+f = 020 000 000
+g = 021 010 001
+h = 022 020 002
+i = 100 102 210
+j = 101 112 211
+k = 102 122 212
+l = 110 101 110
+m = 111 111 111
+n = 112 121 112
+o = 120 100 010
+p = 121 110 011
+q = 122 120 012
+r = 200 202 220
+s = 201 212 221
+t = 202 222 222
+u = 210 201 120
+v = 211 211 121
+w = 212 221 122
+x = 220 200 020
+y = 221 210 021
+z = 222 220 022
+*/
