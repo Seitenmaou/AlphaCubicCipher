@@ -272,53 +272,80 @@ function modifyDecipher (seed) {
     for (let i = 0; i < seed.length; i++){
         if (i % 2 == 0 && seed.charAt(i) == 1){
             finalCube = rotateDecipher(finalCube)
-        } else {
+        } else if (i % 2 == 1 && seed.charAt(i) == 1) {
             finalCube = turnDecipher(finalCube)
+        } else if (seed.charAt(i) == 0) {
+            //do nothing
+        } else {
+            return -1
         }
     }
     return finalCube
 }
-function modifyCipher(seed){
-    let finalCube = defaultCipherCube
+function modifyCipher(finalCube, seed){
 
-    if (seed.length % 2 != 0) {
-        seed.concat("0")
-    }
-
-    for (let i = 0; i < seed.length; i++){
+    for (let i = 0; i <= seed.length; i++){
         if (i % 2 == 0 && seed.charAt(i) == 1){
             finalCube = rotateCipher(finalCube)
-        } else {
+        } else if (i % 2 == 1 && seed.charAt(i) == 1) {
             finalCube = turnCipher(finalCube)
+        } else if (seed.charAt(i) == 0){
+            //do nothing
+        } else {
+            //any other charaacter is an error
+            return -1
         }
     }
+
     return finalCube
 }
 
+function cloneArray(a){
+    return a.map(e => Array.isArray(e) ? cloneArray(e) : e);
+  };
 
 function cipher(inputString, seed){
-    let cipherCube = defaultCipherCube
+    let cipherCube = {...defaultCipherCube}
     let ciphered = ""
     let capitalString = inputString.toUpperCase()
-    if (seed.length > 0){
-        cipherCube = modifyCipher(seed)
+    if (seed.length % 2 != 0){
+        seed.concat("0")
     }
-    for (let i = 0; i < capitalString.length; i++){
-        ciphered += cipherCube[capitalString.charAt(i)]
+    if (seed.length > 0){
+        cipherCube = modifyCipher(cipherCube, seed)
+    }
+    if (cipherCube == -1){
+        return "Seed must be combination of 0 or 1"
+    } else {
+        for (let i = 0; i < capitalString.length; i++){
+            if (capitalString.charAt(i) in cipherCube) {
+                ciphered += cipherCube[capitalString.charAt(i)]
+            } else {
+                return "Invalid character. Only alphabets and spaces."
+            }
+        }
     }
     return ciphered
 }
 
 function decipher(inputCode, seed){
-    let decipherCube = defaultDecipherCube
-    let deciphered = ""
-    if (seed.length > 0){
-        decipherCube = modifyDecipher(seed)
+    if (inputCode.length % 3 != 0 || !/^[120]*$/.test(inputCode)){
+        return "Code length must be multiples of 3 characters and combination of 0/1/2"
+    } else {
+        let decipherCube = cloneArray(defaultDecipherCube)
+        let deciphered = ""
+        if (seed.length > 0){
+            decipherCube = modifyDecipher(seed)
+        }
+        for (let i = 0; i < inputCode.length - 2; i+=3){
+            if (decipherCube == -1){
+                return "Seed must be combination of 0 or 1"
+            } else {
+           deciphered += decipherCube[inputCode.charAt(i)][inputCode.charAt(i+1)][inputCode.charAt(i+2)]
+            }
+        }
+        return deciphered
     }
-    for (let i = 0; i < inputCode.length - 2; i+=3){
-       deciphered += decipherCube[inputCode.charAt(i)][inputCode.charAt(i+1)][inputCode.charAt(i+2)]
-    }
-    return deciphered
 }
 
 function display(inputCode){
