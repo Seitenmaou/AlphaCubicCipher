@@ -1,4 +1,8 @@
 //It says readme but its just note scribbles on how the cipher works tbh...
+//This is just for fun, should not be used for anything important
+//Type in a sentence to cipher, optionally a seed with 0/1, it will code it to 0/1/2
+//Copy paste the 0/1/2 into decipher, with the same seed and it will decipher it back to string
+//Many seed variations overlap, so not very secure either
 
 /*
 VARIANT

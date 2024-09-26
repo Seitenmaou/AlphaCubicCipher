@@ -352,7 +352,6 @@ function display(inputCode){
 
 }
 
-
 function displayDecipher(cube) { //for debug purpose
     displayString = ""
     for (let i = 0; i < 3; i++){
