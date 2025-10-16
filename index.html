@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cipher UI</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<script src="./cipher.js"></script>
+  <div class="container">
+    <textarea placeholder="Input 1..."></textarea>
+    <textarea placeholder="Input 2..."></textarea>
+    <textarea placeholder="Output..." readonly></textarea>
+  </div>
+
+  <button id="modeButton">Cipher</button>
+
+  <script>
+    const button = document.getElementById('modeButton');
+    let isCipher = true;
+
+    button.addEventListener('click', () => {
+      isCipher = !isCipher;
+      button.textContent = isCipher ? 'Cipher' : 'Decipher';
+      button.style.background = isCipher ? '#4b5cff' : '#ff5c5c';
+    });
+  </script>
+</body>
+</html>
