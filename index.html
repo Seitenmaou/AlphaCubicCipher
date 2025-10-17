@@ -1,30 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cipher UI</title>
-<link rel="stylesheet" href="./styles.css">
-</head>
-<body>
-<script src="./cipher.js"></script>
-  <div class="container">
-    <textarea placeholder="Input 1..."></textarea>
-    <textarea placeholder="Input 2..."></textarea>
-    <textarea placeholder="Output..." readonly></textarea>
-  </div>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Cipher UI</title>
+    <link rel="stylesheet" href="./styles.css" />
+    </head>
+    <body>
+    <script src="./dualKeyCipher.js"></script>
 
-  <button id="modeButton">Cipher</button>
+    <div class="container">
+        <textarea id="input1" placeholder="Input 1..."></textarea>
+        <textarea id="input2" placeholder="Input 2..."></textarea>
+        <textarea id="output" placeholder="Output..." readonly></textarea>
+    </div>
 
-  <script>
+    <button id="modeButton">Cipher</button>
+
+    <script>
     const button = document.getElementById('modeButton');
     let isCipher = true;
 
+    const input1 = document.getElementById('input1');
+    const input2 = document.getElementById('input2');
+    const output = document.getElementById('output');
+
+    let typingTimer;
+    const doneTypingInterval = 2000; // 2 seconds
+
+    function runCipher() {
+    const result = cipher(input1.value, input2.value, isCipher);
+    output.value = result;
+    }
+
+    function handleTyping() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(runCipher, doneTypingInterval);
+    }
+
+    // Listen to input changes
+    input1.addEventListener('input', handleTyping);
+    input2.addEventListener('input', handleTyping);
+
+    // Toggle mode and run cipher immediately
     button.addEventListener('click', () => {
-      isCipher = !isCipher;
-      button.textContent = isCipher ? 'Cipher' : 'Decipher';
-      button.style.background = isCipher ? '#4b5cff' : '#ff5c5c';
+        isCipher = !isCipher;
+        button.textContent = isCipher ? 'Cipher' : 'Decipher';
+        button.style.background = isCipher ? '#4b5cff' : '#ff5c5c';
+
+        // Run cipher immediately on mode change
+        runCipher();
     });
-  </script>
+</script>
+
 </body>
 </html>
