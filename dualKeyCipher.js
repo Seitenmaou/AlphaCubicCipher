@@ -78,7 +78,7 @@ function locateFace(coord) {
     return faces;
 }
 
-function rotateElements3D(matrix3D, rotationArray) {
+function rotateElements3D(matrix3D, rotationArray, reverse = false) {
     const positions = {};
 
     // Step 1: Find and store positions of all elements in rotationArray
@@ -92,14 +92,21 @@ function rotateElements3D(matrix3D, rotationArray) {
             }
         }
     }
-
+    
     // Step 2: Deep copy to preserve original values
     const tempMatrix = JSON.parse(JSON.stringify(matrix3D));
+    
+    let toVal, fromVal;
 
     // Step 3: Rotate elements to new positions
     for (let i = 0; i < rotationArray.length; i++) {
-        const fromVal = rotationArray[i];
-        const toVal = rotationArray[(i + 1) % rotationArray.length]; // circular shift
+        if (reverse) {
+            toVal = rotationArray[i];
+            fromVal = rotationArray[(i - 1 + rotationArray.length) % rotationArray.length]; // previous → current
+        } else {
+            fromVal = rotationArray[i];
+            toVal = rotationArray[(i + 1) % rotationArray.length]; // circular shift
+        }
         const [toX, toY, toZ] = positions[toVal];
         const [fromX, fromY, fromZ] = positions[fromVal];
         matrix3D[toX][toY][toZ] = tempMatrix[fromX][fromY][fromZ];
@@ -116,11 +123,11 @@ function scrambleCipher(matrix, face) {
     } else if (face == "front") {
         tempMatrix = rotateElements3D(tempMatrix, [matrix[0][0][0], matrix[0][0][2], matrix[0][2][2], matrix[0][2][0]]);
         tempMatrix = rotateElements3D(tempMatrix, [matrix[0][0][1], matrix[0][1][2], matrix[0][2][1], matrix[0][1][0]]);
-    } else if (face = "back") {
+    } else if (face == "back") {
         tempMatrix = rotateElements3D(tempMatrix, [matrix[2][0][2], matrix[2][0][0], matrix[2][2][0], matrix[2][2][2]]);
         tempMatrix = rotateElements3D(tempMatrix, [matrix[2][0][1], matrix[2][1][0], matrix[2][2][1], matrix[2][1][2]]);
     } else if (face == "left") {
-        tempMatrix = rotateElements3D(tempMatrix, [matrix[0][2][0], matrix[0][0][0], matrix[0][2][0], matrix[2][2][0]]);
+        tempMatrix = rotateElements3D(tempMatrix, [matrix[2][0][0], matrix[0][0][0], matrix[0][2][0], matrix[2][2][0]]);
         tempMatrix = rotateElements3D(tempMatrix, [matrix[1][0][0], matrix[0][1][0], matrix[1][2][0], matrix[2][1][0]]);
     } else if (face == "right") {
         tempMatrix = rotateElements3D(tempMatrix, [matrix[0][0][2], matrix[2][0][2], matrix[2][2][2], matrix[0][2][2]]);
@@ -150,6 +157,49 @@ function getMatrixValue(str, matrix) {
     return result;
 }
 
+function getMatrixLocation(input, tempMatrix) {
+    const result = [];
+
+    for (let char of input) {
+        let found = false;
+
+        for (let i = 0; i < tempMatrix.length; i++) {
+            for (let j = 0; j < tempMatrix[i].length; j++) {
+                for (let k = 0; k < tempMatrix[i][j].length; k++) {
+                    if (tempMatrix[i][j][k] === char) {
+                        result.push(`${i}${j}${k}`);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            if (found) break;
+        }
+
+        if (!found) {
+            throw new Error(`Character "${char}" not found in tempMatrix`);
+        }
+    }
+
+    return result;
+}
+
+function decipherText(input) {
+    let decipheredText = "";
+    for (let i = 0; i < input.length; i++) {
+        const triplet = input[i];
+        for (let [key, value] of Object.entries(defaultCipher)) {
+            if (value === triplet) {
+                decipheredText += key;
+                break;
+            }
+        }
+    }
+    return decipheredText;
+}
+
+
 function encipherText(input) {
     let encipheredText = ""
     for (let char of input) {
@@ -169,8 +219,7 @@ function cipher(input, cipher) {
     for (let char of cipher) {
         scrambleOrder = scrambleOrder.concat(locateFace(findCoordinates(tempMatrix, char)));
     }
-
-
+    
     for (let face of scrambleOrder) {
         tempMatrix = scrambleCipher(tempMatrix, face);
     }
@@ -178,18 +227,41 @@ function cipher(input, cipher) {
     let encipheredText = encipherText(input);
     let ciphered = getMatrixValue(encipheredText, tempMatrix);
 
-
     return ciphered;
+}
+
+function decipher(input, cipher) {
+    let tempMatrix = JSON.parse(JSON.stringify(defaultMatrix));
+
+    cleanString(input);
+    convertDigitsToWords(input);
+
+    let scrambleOrder= [];
+
+    for (let char of cipher) {
+        scrambleOrder = scrambleOrder.concat(locateFace(findCoordinates(tempMatrix, char)));
+    }
+    
+    for (let face of scrambleOrder) {
+        tempMatrix = scrambleCipher(tempMatrix, face);
+    }
+
+    let deciphered = getMatrixLocation(input, tempMatrix);
+    let decipheredText = decipherText(deciphered);
+
+    return decipheredText;
 }
 
 function encode(rawInput, cipherKey, isCipher) {
     if (isCipher) {
-        const scrambledCipher = scrambleCipher(cipherKey);
-        const cipheredText = cipher(rawInput, scrambledCipher); 
+        const cipheredText = cipher(rawInput, cipherKey); 
         return cipheredText;
     }
     else {
-        return "is deciphering";
+        //given the key, and ciphered, get the numbers back, and then output from default matrix
+
+        const decipheredText = decipher(rawInput, cipherKey); 
+        return decipheredText;
     }
 }
 
